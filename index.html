@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پَرسه‌جو</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap');
+
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --border: #2a2a2a;
+    --text: #e8e2d9;
+    --text-dim: #7a7570;
+    --accent: #c9a96e;
+    --accent-soft: rgba(201,169,110,0.12);
+    --green: #7a9e7e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  /* ── INTRO ── */
+  #intro {
+    max-width: 520px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .logo {
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+
+  .tagline {
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    font-weight: 300;
+    margin-bottom: 3rem;
+    line-height: 1.8;
+  }
+
+  .intro-desc {
+    font-size: 1.05rem;
+    line-height: 2;
+    color: var(--text);
+    margin-bottom: 2.5rem;
+  }
+
+  .btn-start {
+    background: var(--accent);
+    color: #0e0e0e;
+    border: none;
+    padding: 0.9rem 3rem;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-start:hover { opacity: 0.85; }
+
+  /* ── QUIZ ── */
+  #quiz { display: none; max-width: 580px; width: 100%; }
+
+  .progress-bar-wrap {
+    height: 2px;
+    background: var(--border);
+    margin-bottom: 2.5rem;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  .q-section {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.8rem;
+    font-weight: 500;
+  }
+
+  .q-text {
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.9;
+    color: var(--text);
+    margin-bottom: 2rem;
+  }
+
+  .q-counter {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-bottom: 0.4rem;
+  }
+
+  /* choice options */
+  .options { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .option-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.85rem 1.2rem;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 0.95rem;
+    text-align: right;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    line-height: 1.6;
+  }
+  .option-btn:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .option-btn.selected {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  /* text input */
+  .text-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 1rem 1.2rem;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 0.95rem;
+    border-radius: 2px;
+    resize: vertical;
+    min-height: 100px;
+    margin-bottom: 1rem;
+    line-height: 1.8;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .text-input:focus { border-color: var(--accent); }
+
+  .btn-next {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 0.7rem 2rem;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    margin-top: 1rem;
+    display: none;
+  }
+  .btn-next:hover {
+    background: var(--accent);
+    color: #0e0e0e;
+  }
+  .btn-next.visible { display: inline-block; }
+
+  /* ── RESULT ── */
+  #result { display: none; max-width: 620px; width: 100%; }
+
+  .result-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  .result-type {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+  }
+
+  .result-desc {
+    font-size: 1rem;
+    color: var(--text-dim);
+    line-height: 2;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .plan-title {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 1.2rem;
+  }
+
+  .plan-days { display: flex; flex-direction: column; gap: 1rem; }
+
+  .plan-day {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 1.1rem 1.3rem;
+  }
+
+  .day-name {
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .day-main {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+
+  .day-sub {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  .result-note {
+    margin-top: 2rem;
+    padding: 1.2rem;
+    background: var(--accent-soft);
+    border-right: 2px solid var(--accent);
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    line-height: 1.9;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .btn-restart {
+    margin-top: 2rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 0.7rem 1.8rem;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .btn-restart:hover { border-color: var(--text-dim); color: var(--text); }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+    margin: 1.5rem 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="logo">پَرسه‌جو</div>
+  <div class="tagline">همراه فرهنگی این روزهایت</div>
+  <p class="intro-desc">
+    چند سؤال می‌پرسم، حال‌وهوایت را می‌خوانم،<br>
+    و یک برنامه فرهنگی متناسب با این لحظه‌ات پیشنهاد می‌دهم.
+  </p>
+  <button class="btn-start" onclick="startQuiz()">شروع پرسه 🌿</button>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="q-counter" id="qCounter"></div>
+  <div class="q-section" id="qSection"></div>
+  <div class="q-text" id="qText"></div>
+  <div id="qOptions"></div>
+  <button class="btn-next" id="btnNext" onclick="nextQuestion()">ادامه ←</button>
+</div>
+
+<!-- RESULT -->
+<div id="result">
+  <div class="result-label">مختصات این روزهایت</div>
+  <div class="result-type" id="resultType"></div>
+  <div class="result-desc" id="resultDesc"></div>
+  <div class="plan-title">برنامه فرهنگی هفت روز</div>
+  <div class="plan-days" id="planDays"></div>
+  <div class="result-note" id="resultNote"></div>
+  <br>
+  <button class="btn-restart" onclick="restart()">🔄 یه بار دیگه پرسه بزن</button>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    id: "q1", section: "وضعیت کلی ذهن", type: "choice",
+    text: "این روزها بیشتر کجای این طیفی؟",
+    options: ["درونم شلوغه ولی بیرون آرومم","بیرون فعالم ولی درونم خالیه","هر دو درگیرن","هر دو آرومن","بین اینا در نوسانم"]
+  },
+  {
+    id: "q2", section: "", type: "choice",
+    text: "اگر ذهنت این روزها یک «ریتم» داشت، کدومه؟",
+    options: ["سریع و پرش فکری","کند و سنگین","موجی (بالا و پایین)","یکنواخت و بی‌نوسان","نامنظم و پراکنده"]
+  },
+  {
+    id: "q3", section: "جهت‌گیری انرژی", type: "choice",
+    text: "بعد از یک روز شلوغ، معمولاً چی تو رو شارژ می‌کنه؟",
+    options: ["بودن با آدم‌ها","تنها بودن","یه کار خلاقانه","یه تجربه جدید بیرونی","استراحت و هیچ‌کاری نکردن"]
+  },
+  {
+    id: "q4", section: "", type: "choice",
+    text: "وقتی می‌خوای تصمیم مهم بگیری بیشتر به چی تکیه می‌کنی؟",
+    options: ["حس درونی","منطق و تحلیل","تجربه قبلی","نظر آدم‌های قابل اعتماد","بستگی به شرایط داره"]
+  },
+  {
+    id: "q5", section: "سبک ادراک جهان", type: "choice",
+    text: "تو معمولاً بیشتر متوجه چی می‌شی؟",
+    options: ["جزئیات","تصویر کلی","احساسات آدم‌ها","الگوها و ارتباط‌ها","چیزهایی که بقیه نمی‌بینن"]
+  },
+  {
+    id: "q6", section: "", type: "choice",
+    text: "وقتی وارد یک موقعیت جدید می‌شی:",
+    options: ["سریع وارد عمل می‌شم","اول نگاه می‌کنم بعد عمل","اول حسش می‌کنم","اول تحلیلش می‌کنم","ترکیبی از همه"]
+  },
+  {
+    id: "q7", section: "وضعیت احساسی", type: "choice",
+    text: "این روزها بیشتر کدوم حس همراهته؟",
+    options: ["خستگی ذهنی","بی‌قراری","امید خاموش","آرامش","سردرگمی","هیجان"]
+  },
+  {
+    id: "q8", section: "", type: "choice",
+    text: "اگر بخوای وضعیتت رو بدون توضیح کامل بگی، کدوم جمله نزدیک‌تره؟",
+    options: ["دارم جلو می‌رم ولی نمی‌دونم به کجا","انگار یه چیزی کم دارم","دارم خودمو دوباره می‌سازم","فعلاً فقط دارم تحمل می‌کنم","دارم چیز جدیدی رو کشف می‌کنم"]
+  },
+  {
+    id: "q9", section: "رابطه با دنیا", type: "choice",
+    text: "بین این دو کدوم بهت نزدیک‌تره؟",
+    options: ["بیشتر داخل ذهنم زندگی می‌کنم","بیشتر داخل دنیای واقعی زندگی می‌کنم","هر دو به یک اندازه","بسته به شرایط تغییر می‌کنه"]
+  },
+  {
+    id: "q10", section: "", type: "choice",
+    text: "در جمع‌ها معمولاً:",
+    options: ["انرژی می‌گیرم","انرژی از دست می‌دم","اولش خوبه بعد خسته می‌شم","بستگی به آدم‌ها داره"]
+  },
+  {
+    id: "q11", section: "خواسته از این تجربه", type: "choice",
+    text: "الان بیشتر چی می‌خوای؟",
+    options: ["می‌خوام از این حال دربیام، سبک‌تر بشم","می‌خوام با این حالم باشم، عمیق‌تر بشم","فقط یه تجربه‌ی خوب می‌خوام، بدون فکر زیاد","نمی‌دونم، هر چی بگی"]
+  },
+  {
+    id: "q12", section: "فضا و سبک فرهنگی", type: "choice",
+    text: "الان کدوم فضا بیشتر تو رو جذب می‌کنه؟",
+    options: ["شهر شب","بارون و تنهایی","شلوغی و نور زیاد","طبیعت ساکت","فضای مینیمال و خلوت"]
+  },
+  {
+    id: "q13", section: "", type: "choice",
+    text: "کدوم نوع اثر بیشتر بهت می‌چسبه؟",
+    options: ["فیلم‌های آرام و عمیق","آثار احساسی و عاشقانه","داستان‌های تاریک و فلسفی","آثار الهام‌بخش و انگیزشی","آثار واقعی و روزمره"]
+  },
+  {
+    id: "q14", section: "سلیقه شخصی", type: "text",
+    text: "یه خواننده یا گروه موزیک که این روزا بهش برمی‌گردی؟\n(هر چیزی — ایرانی، خارجی، قدیمی، جدید)"
+  },
+  {
+    id: "q15", section: "", type: "text",
+    text: "آخرین چیزی که دیدی یا خوندی و تکونت داد چی بود؟\n(فیلم، کتاب، سریال، هر چیزی)"
+  },
+  {
+    id: "q16", section: "ظرفیت هفته", type: "choice",
+    text: "این هفته چقدر می‌تونی بیرون بری؟",
+    options: ["ترجیحاً خونه می‌مونم","یه‌کم — یه جای آروم نزدیک","حاضرم برم جاهای مختلف تهران","هر چی بگی آماده‌ام"]
+  },
+  {
+    id: "q17", section: "حرف آخر", type: "text",
+    text: "بدون سانسور و بدون مرتب کردن جمله‌ها:\nاین روزها واقعاً چه شکلی‌اند برای تو؟"
+  }
+];
+
+// ── دسته‌بندی‌ها ──
+const TYPES = {
+  calm: {
+    name: "آرام و درونگرا",
+    desc: "این روزات شبیه یه اتاق ساکته که نور ملایمی توشه. نه خاموش، نه شلوغ — یه جور آرامش انتخابی که دنبالش گشتی یا بهش رسیدی.",
+    plan: [
+      { day: "شنبه", main: "🎵 آلبوم «بی‌تو» از محسن چاوشی — آهنگ «کاش» رو با هدفون و چشم بسته گوش بده.", sub: "✨ یه چیز گرم بریز، پنجره رو باز کن." },
+      { day: "یکشنبه", main: "📚 کتاب «سیذارتا» هرمان هسه — فقط فصل اول.", sub: "✨ بنویس بعد از خوندن چه حسی داشتی." },
+      { day: "دوشنبه", main: "🎬 فیلم «یه حبه قند» میرکریمی — ببین آروم بودن چه شکلیه.", sub: "✨ بدون تفسیر، فقط ببین." },
+      { day: "سه‌شنبه", main: "🚶 پیاده‌روی ۳۰ دقیقه‌ای توی محله، بدون هدفون.", sub: "✨ فقط صداهای اطرافت رو بشنو." },
+      { day: "چهارشنبه", main: "🎵 آلبوم «سپیده‌دم» همایون شجریان — آهنگ «دلم گرفته».", sub: "✨ بذار موج احساست بیاد و بره." },
+      { day: "پنجشنبه", main: "☕ کافه آریو، خیابان ولیعصر — بشین کنار پنجره، گوشی رو برگردون.", sub: "✨ فقط آدم‌ها رو تماشا کن." },
+      { day: "جمعه", main: "📚 کتاب «کمال‌گرایی» تال بن‌شاهار — یه فصل کوتاه.", sub: "✨ یه چیزی که این هفته خوب بود رو بنویس." }
+    ]
+  },
+  restless: {
+    name: "بی‌قرار و جستجوگر",
+    desc: "ذهنت یه جای ساکت نمیشینه. نه بد، نه خوب — فقط همینطوری. یه چیزی توته که دنبالش میگردی ولی اسمش رو نمیدونی.",
+    plan: [
+      { day: "شنبه", main: "🎬 فیلم «درباره الی» فرهادی — به نگاه آدم‌ها توجه کن، نه دیالوگ‌ها.", sub: "✨ بعدش ده دقیقه بنویس چی توذهنت موند." },
+      { day: "یکشنبه", main: "🎵 بند ایهام — آهنگ «نگاهم کن» با هدفون، دراز بکش، هیچ‌کاری نکن.", sub: "✨ فقط ۴ دقیقه." },
+      { day: "دوشنبه", main: "🚶 پارک لاله، کنار دریاچه — صبح زود، قبل از شلوغی.", sub: "✨ یه مسیر جدید برو." },
+      { day: "سه‌شنبه", main: "📚 «صد سال تنهایی» مارکز — فقط فصل اول رو بخون.", sub: "✨ ببین چه حسی بهت میده." },
+      { day: "چهارشنبه", main: "🎭 یه نمایشگاه عکس یا هنری توی تهران — هر کدوم که الان داره.", sub: "✨ فقط برو ببین، بدون انتظار." },
+      { day: "پنجشنبه", main: "🎵 «رادیو اکتیو» پادکست — قسمتی که دنبال معنا میگرده.", sub: "✨ موقع پیاده‌روی گوش بده." },
+      { day: "جمعه", main: "🎬 فیلم «ابد و یک روز» سعید روستایی.", sub: "✨ ببین چی توت تکون میخوره." }
+    ]
+  },
+  social: {
+    name: "اجتماعی و سبک",
+    desc: "آدم‌ها بهت انرژی میدن و تو این رو میدونی. این روزات دنبال یه تجربه خوبی — بدون بار، بدون فکر زیاد.",
+    plan: [
+      { day: "شنبه", main: "🎵 آلبوم «خوش‌بختی» داریوش — آهنگ‌های شاد و پرانرژی.", sub: "✨ بذار توی خونه برقصی." },
+      { day: "یکشنبه", main: "☕ با یه دوست قدیمی قرار بذار، کافه روبه‌رو خیابان کریم‌خان.", sub: "✨ بدون برنامه، فقط حرف بزنید." },
+      { day: "دوشنبه", main: "🎬 فیلم «پسر عمو» مسعود کیمیایی — سبک و خاطره‌انگیز.", sub: "✨ با یه نفر دیگه ببین." },
+      { day: "سه‌شنبه", main: "🎭 یه کنسرت یا ایونت موزیک زنده در تهران.", sub: "✨ حتی اگه خواننده رو نمیشناسی برو." },
+      { day: "چهارشنبه", main: "📚 «آلکیمیست» پائولو کوئیلو — خوندنش یه روز طول میکشه.", sub: "✨ توی یه کافه شلوغ بخونش." },
+      { day: "پنجشنبه", main: "🚶 بازار بزرگ تهران — فقط برای پرسه زدن، نه خرید.", sub: "✨ آدم‌ها رو تماشا کن." },
+      { day: "جمعه", main: "🎵 یه پلی‌لیست شاد بساز از آهنگ‌هایی که دوست داری.", sub: "✨ با دوستات به اشتراک بذار." }
+    ]
+  },
+  transition: {
+    name: "در گذار",
+    desc: "یه چیزی داره عوض میشه — حتی اگه هنوز اسمش رو نداری. این روزات شبیه فاصله بین دو فصله.",
+    plan: [
+      { day: "شنبه", main: "📚 «وقتی نفس می‌کشیدم» پل کالانیتی — فقط مقدمه.", sub: "✨ بنویس این روزات چه شکلیه." },
+      { day: "یکشنبه", main: "🎵 محسن نامجو — آلبوم «درخت گردو»، آهنگ «باد».", sub: "✨ با هدفون، چشم بسته." },
+      { day: "دوشنبه", main: "🎬 فیلم «جدایی نادر از سیمین» فرهادی — دقت کن به صحنه‌های سکوت.", sub: "✨ بعدش ده دقیقه ساکت بشین." },
+      { day: "سه‌شنبه", main: "🚶 مسیر پیاده‌روی از میدان فاطمی تا پارک لاله.", sub: "✨ بدون هدفون، با خودت." },
+      { day: "چهارشنبه", main: "📚 «کیمیاگر» کوئیلو — یه فصل.", sub: "✨ یه جمله که تکونت داد رو بنویس." },
+      { day: "پنجشنبه", main: "☕ کافه‌ای با نور کم — بشین، یه چیز گرم سفارش بده، ننویس، فقط فکر کن.", sub: "✨ اجازه بده ذهنت ولو بشه." },
+      { day: "جمعه", main: "🎬 فیلم «درخت گلابی» کیارستمی.", sub: "✨ ببین سکوت چطور پر میشه." }
+    ]
+  },
+  creative: {
+    name: "خلاق و تحلیلگر",
+    desc: "ذهنت کار میکنه — حتی وقتی نمیخوای. دنبال چیزی هستی که فکرت رو روشن کنه، نه خاموش.",
+    plan: [
+      { day: "شنبه", main: "📚 «فکر کردن، سریع و کند» دانیل کانمن — یه فصل.", sub: "✨ یه ایده که ازش گرفتی بنویس." },
+      { day: "یکشنبه", main: "🎵 «بیات‌زند» شهرام ناظری — موزیک کلاسیک ایرانی برای تمرکز.", sub: "✨ موقع کار یا نوشتن گوش بده." },
+      { day: "دوشنبه", main: "🎬 فیلم «مغزهای کوچک زنگ‌زده» هومن سیدی.", sub: "✨ با یه قلم و کاغذ ببین." },
+      { day: "سه‌شنبه", main: "🖼 گالری هنری — هر کدوم که الان داره.", sub: "✨ جلوی یه اثر بایست، ببین چی حس میکنی." },
+      { day: "چهارشنبه", main: "📚 «نقطه‌ی اوج» مالکوم گلدول — فصل اول.", sub: "✨ ببین چطور الگوها رو ربط میده." },
+      { day: "پنجشنبه", main: "🎵 رادیوهد — آلبوم «OK Computer».", sub: "✨ گوش بده و ببین کجای ذهنت میبرتت." },
+      { day: "جمعه", main: "🚶 موزه هنرهای معاصر تهران.", sub: "✨ یه اثر پیدا کن که نفهمیدیش، جلوش وایسا." }
+    ]
+  }
+};
+
+// ── scoring ──
+function calculateType(answers) {
+  let scores = { calm: 0, restless: 0, social: 0, transition: 0, creative: 0 };
+
+  const a = answers;
+
+  // q1
+  if (a.q1 === "هر دو آرومن") scores.calm += 3;
+  if (a.q1 === "درونم شلوغه ولی بیرون آرومم") scores.creative += 2;
+  if (a.q1 === "بیرون فعالم ولی درونم خالیه") scores.transition += 2;
+  if (a.q1 === "هر دو درگیرن") scores.restless += 2;
+  if (a.q1 === "بین اینا در نوسانم") scores.restless += 2;
+
+  // q2
+  if (a.q2 === "کند و سنگین") scores.calm += 2;
+  if (a.q2 === "سریع و پرش فکری") scores.creative += 2;
+  if (a.q2 === "موجی (بالا و پایین)") scores.restless += 2;
+  if (a.q2 === "یکنواخت و بی‌نوسان") scores.calm += 2;
+  if (a.q2 === "نامنظم و پراکنده") scores.transition += 2;
+
+  // q3
+  if (a.q3 === "بودن با آدم‌ها") scores.social += 3;
+  if (a.q3 === "تنها بودن") scores.calm += 3;
+  if (a.q3 === "یه کار خلاقانه") scores.creative += 3;
+  if (a.q3 === "یه تجربه جدید بیرونی") scores.restless += 3;
+  if (a.q3 === "استراحت و هیچ‌کاری نکردن") scores.calm += 2;
+
+  // q7
+  if (a.q7 === "آرامش") scores.calm += 3;
+  if (a.q7 === "بی‌قراری") scores.restless += 3;
+  if (a.q7 === "هیجان") scores.social += 2;
+  if (a.q7 === "سردرگمی") scores.transition += 3;
+  if (a.q7 === "خستگی ذهنی") scores.transition += 2;
+  if (a.q7 === "امید خاموش") scores.transition += 2;
+
+  // q8
+  if (a.q8 === "دارم چیز جدیدی رو کشف می‌کنم") scores.restless += 2;
+  if (a.q8 === "دارم خودمو دوباره می‌سازم") scores.transition += 3;
+  if (a.q8 === "فعلاً فقط دارم تحمل می‌کنم") scores.transition += 2;
+  if (a.q8 === "دارم جلو می‌رم ولی نمی‌دونم به کجا") scores.restless += 2;
+  if (a.q8 === "انگار یه چیزی کم دارم") scores.transition += 2;
+
+  // q11
+  if (a.q11 === "می‌خوام از این حال دربیام، سبک‌تر بشم") scores.social += 2;
+  if (a.q11 === "می‌خوام با این حالم باشم، عمیق‌تر بشم") scores.calm += 2;
+  if (a.q11 === "فقط یه تجربه‌ی خوب می‌خوام، بدون فکر زیاد") scores.social += 3;
+
+  // q13
+  if (a.q13 === "فیلم‌های آرام و عمیق") scores.calm += 2;
+  if (a.q13 === "آثار احساسی و عاشقانه") scores.social += 2;
+  if (a.q13 === "داستان‌های تاریک و فلسفی") scores.creative += 2;
+  if (a.q13 === "آثار الهام‌بخش و انگیزشی") scores.restless += 2;
+  if (a.q13 === "آثار واقعی و روزمره") scores.transition += 2;
+
+  // q5
+  if (a.q5 === "الگوها و ارتباط‌ها" || a.q5 === "تصویر کلی") scores.creative += 2;
+  if (a.q5 === "احساسات آدم‌ها") scores.social += 2;
+  if (a.q5 === "جزئیات") scores.calm += 1;
+
+  return Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
+}
+
+// ── state ──
+let currentQ = 0;
+let answers = {};
+let selectedOption = null;
+
+function startQuiz() {
+  document.getElementById('intro').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  showQuestion();
+}
+
+function showQuestion() {
+  const q = QUESTIONS[currentQ];
+  const total = QUESTIONS.length;
+
+  document.getElementById('progressBar').style.width = ((currentQ / total) * 100) + '%';
+  document.getElementById('qCounter').textContent = `سوال ${currentQ + 1} از ${total}`;
+  document.getElementById('qSection').textContent = q.section;
+  document.getElementById('qText').textContent = q.text;
+
+  selectedOption = null;
+  const btnNext = document.getElementById('btnNext');
+  btnNext.classList.remove('visible');
+
+  const optionsDiv = document.getElementById('qOptions');
+  optionsDiv.innerHTML = '';
+
+  if (q.type === 'choice') {
+    const wrap = document.createElement('div');
+    wrap.className = 'options';
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.textContent = opt;
+      btn.onclick = () => selectOption(opt, btn);
+      wrap.appendChild(btn);
+    });
+    optionsDiv.appendChild(wrap);
+  } else {
+    const textarea = document.createElement('textarea');
+    textarea.className = 'text-input';
+    textarea.placeholder = 'اینجا بنویس...';
+    textarea.oninput = () => {
+      if (textarea.value.trim().length > 2) {
+        selectedOption = textarea.value.trim();
+        btnNext.classList.add('visible');
+      } else {
+        btnNext.classList.remove('visible');
+      }
+    };
+    optionsDiv.appendChild(textarea);
+  }
+}
+
+function selectOption(val, btn) {
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedOption = val;
+  document.getElementById('btnNext').classList.add('visible');
+}
+
+function nextQuestion() {
+  if (!selectedOption) return;
+  const q = QUESTIONS[currentQ];
+  answers[q.id] = selectedOption;
+  currentQ++;
+
+  if (currentQ >= QUESTIONS.length) {
+    showResult();
+  } else {
+    showQuestion();
+  }
+}
+
+function showResult() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
+
+  const typeKey = calculateType(answers);
+  const type = TYPES[typeKey];
+
+  document.getElementById('resultType').textContent = type.name;
+  document.getElementById('resultDesc').textContent = type.desc;
+
+  const planDiv = document.getElementById('planDays');
+  planDiv.innerHTML = '';
+  type.plan.forEach(day => {
+    const div = document.createElement('div');
+    div.className = 'plan-day';
+    div.innerHTML = `
+      <div class="day-name">${day.day}</div>
+      <div class="day-main">${day.main}</div>
+      <div class="day-sub">${day.sub}</div>
+    `;
+    planDiv.appendChild(div);
+  });
+
+  document.getElementById('resultNote').textContent =
+    'این برنامه یه پیشنهاد اولیه‌ست. به زودی یه تحلیل شخصی‌تر برایت می‌فرستیم که دقیقاً برای این روزهایت نوشته شده. 🌿';
+}
+
+function restart() {
+  currentQ = 0;
+  answers = {};
+  selectedOption = null;
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  showQuestion();
+}
+</script>
+</body>
+</html>
